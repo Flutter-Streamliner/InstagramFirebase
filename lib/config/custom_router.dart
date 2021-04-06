@@ -3,6 +3,7 @@ import 'package:flutter_instagram/screens/screens.dart';
 
 class CustomRouter {
   static Route onGenerateRoute(RouteSettings settings) {
+    print('Route: ${settings.name}');
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
@@ -11,6 +12,10 @@ class CustomRouter {
         );
       case SplashScreen.routeName:
         return SplashScreen.route();
+      case LoginScreen.routeName:
+        return LoginScreen.route();
+      case NavScreen.routeName:
+        return NavScreen.route();
       default:
         return _errorRoute();
     }
