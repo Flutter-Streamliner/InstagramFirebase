@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram/screens/login/cubit/login_cubit.dart';
+import 'package:flutter_instagram/screens/screens.dart';
 
 import '../../repositories/repositories.dart';
 
@@ -94,8 +95,8 @@ class LoginScreen extends StatelessWidget {
                               primary: Colors.grey[200],
                               onPrimary: Colors.black,
                             ),
-                            onPressed: () =>
-                                print('Navigate to the Signup Screen'),
+                            onPressed: () => Navigator.pushNamed(
+                                context, SignupScreen.routeName),
                             child: const Text('No account? Sign up'),
                           ),
                         ],
