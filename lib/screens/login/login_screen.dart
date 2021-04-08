@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram/screens/login/cubit/login_cubit.dart';
 import 'package:flutter_instagram/screens/screens.dart';
+import 'package:flutter_instagram/widgets/widgets.dart';
 
 import '../../repositories/repositories.dart';
 
@@ -30,12 +31,9 @@ class LoginScreen extends StatelessWidget {
         child: BlocConsumer<LoginCubit, LoginState>(listener: (context, state) {
           if (state.status == LoginStatus.error) {
             showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Error'),
-                content: Text(state.failure.message),
-              ),
-            );
+                context: context,
+                builder: (context) =>
+                    ErrorDialog(content: state.failure.message));
           }
         }, builder: (context, state) {
           return Scaffold(

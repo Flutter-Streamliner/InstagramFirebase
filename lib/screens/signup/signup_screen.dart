@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_instagram/repositories/repositories.dart';
+import 'package:flutter_instagram/widgets/widgets.dart';
 
 import 'cubit/signup_cubit.dart';
 
@@ -31,9 +32,8 @@ class SignupScreen extends StatelessWidget {
           if (state.status == SignupStatus.error) {
             showDialog(
               context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Error'),
-                content: Text(state.failure.message),
+              builder: (context) => ErrorDialog(
+                content: state.failure.message,
               ),
             );
           }
