@@ -17,6 +17,14 @@ class NavScreen extends StatelessWidget {
     );
   }
 
+  final Map<BottomNavItem, GlobalKey<NavigatorState>> navigatorKeys = {
+    BottomNavItem.feed: GlobalKey<NavigatorState>(),
+    BottomNavItem.search: GlobalKey<NavigatorState>(),
+    BottomNavItem.create: GlobalKey<NavigatorState>(),
+    BottomNavItem.notifications: GlobalKey<NavigatorState>(),
+    BottomNavItem.profile: GlobalKey<NavigatorState>(),
+  };
+
   final Map<BottomNavItem, IconData> items = const {
     BottomNavItem.feed: Icons.home,
     BottomNavItem.search: Icons.search,
@@ -32,19 +40,47 @@ class NavScreen extends StatelessWidget {
       child: BlocBuilder<BottomNavBarCubit, BottomNavBarState>(
         builder: (context, state) {
           return Scaffold(
-            body: Text('Nav Screen'),
+            body: Stack(
+                children: items
+                    .map((item, _) => MapEntry(
+                          item,
+                          _buildOffStageNavigator(
+                              item, item == state.selectedItem),
+                        ))
+                    .values
+                    .toList()),
             bottomNavigationBar: BottomNavBar(
               items: items,
               selectedItem: state.selectedItem,
               onTap: (int index) {
                 final selectedItem = BottomNavItem.values[index];
-                context
-                    .read<BottomNavBarCubit>()
-                    .updateSelectedItem(selectedItem);
+
+                _selectBottomNavItem(
+                    context, selectedItem, selectedItem == state.selectedItem);
               },
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _selectBottomNavItem(
+      BuildContext context, BottomNavItem selectedItem, bool isSameItem) {
+    if (isSameItem) {
+      navigatorKeys[selectedItem]
+          .currentState
+          .popUntil((route) => route.isFirst);
+    }
+    context.read<BottomNavBarCubit>().updateSelectedItem(selectedItem);
+  }
+
+  Widget _buildOffStageNavigator(BottomNavItem currentItem, bool isSelected) {
+    return Offstage(
+      offstage: !isSelected,
+      child: TabNavigator(
+        navigatorKey: navigatorKeys[currentItem],
+        item: currentItem,
       ),
     );
   }
