@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram/blocs/auth/auth_bloc.dart';
 import 'package:flutter_instagram/blocs/simple_bloc_observer.dart';
 import 'package:flutter_instagram/repositories/auth/auth_repository.dart';
+import 'package:flutter_instagram/repositories/repositories.dart';
 import 'config/custom_router.dart';
 import 'screens/screens.dart';
 
@@ -23,7 +24,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(create: (_) => AuthRepository())
+        RepositoryProvider<AuthRepository>(create: (_) => AuthRepository()),
+        RepositoryProvider<BaseUserRepository>(
+          create: (_) => UserRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
