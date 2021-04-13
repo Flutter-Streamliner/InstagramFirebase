@@ -20,23 +20,32 @@ class AuthRepository extends BaseAuthRepository {
 
   @override
   Future<auth.User> signUpWithEmailAndPassword(
-      {@required String user,
+      {@required String username,
       @required String email,
       @required String password}) async {
     try {
       final credentials = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
       final user = credentials.user;
-      _firebaseFirestore.collection(Paths.users).doc(user.uid).set({
-        'username': user,
-        'email': email,
-        'followers': 0,
-        'following': 0,
-      });
+      print(
+          'before saving user to firestore user  id = ${user.uid}, ${user.displayName}');
+      _firebaseFirestore
+          .collection(Paths.users)
+          .doc(user.uid)
+          .set({
+            'username': username,
+            'email': email,
+            'followers': 0,
+            'following': 0,
+          })
+          .then((value) => print('set user success $user'))
+          .catchError((error) => print('set user error $error'));
       return user;
     } on auth.FirebaseAuthException catch (error) {
+      print('ERROR IN AUTH_REPOSITORY FirebaseAuthException = $error');
       throw Failure(code: error.code, message: error.message);
     } on PlatformException catch (error) {
+      print('ERROR IN AUTH_REPOSITORY PlatformException = $error');
       throw Failure(code: error.code, message: error.message);
     }
   }

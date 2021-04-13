@@ -61,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
                           horizontal: 30.0, vertical: 10.0),
                       child: ProfileInfo(
                         username: state.user.username,
-                        bio: state.user.bio,
+                        bio: state.user?.bio ?? '',
                       ),
                     ),
                   ],
