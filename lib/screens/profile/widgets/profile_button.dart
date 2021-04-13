@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_instagram/screens/screens.dart';
 
 class ProfileButtton extends StatelessWidget {
   final bool isCurrentUser;
@@ -14,7 +15,9 @@ class ProfileButtton extends StatelessWidget {
   Widget build(BuildContext context) {
     return isCurrentUser
         ? ElevatedButton(
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).pushNamed(
+                EditProfileScreen.routeName,
+                arguments: EditProfileScreenArgs(context: context)),
             child: const Text(
               'Edit profile',
               style: TextStyle(fontSize: 16.0),
