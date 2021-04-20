@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 class PostRepository extends BasePostRepository {
   final FirebaseFirestore _firebaseFirestore;
 
-  PostRepository({@required FirebaseFirestore firebaseFirestore}) : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+  PostRepository({FirebaseFirestore firebaseFirestore}) : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
 
   @override
   Future<void> createPost({@required Post post})  => 
