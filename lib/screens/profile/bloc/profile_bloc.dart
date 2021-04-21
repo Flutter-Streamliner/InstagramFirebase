@@ -13,13 +13,24 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final BaseUserRepository _userRepository;
   final AuthBloc _authBloc;
+  final BasePostRepository _postRepository;
+
+  StreamSubscription<List<Future<Post>>> _postsSubscription;
 
   ProfileBloc(
       {@required BaseUserRepository userRepository,
-      @required AuthBloc authBloc})
+      @required AuthBloc authBloc, 
+      @required BasePostRepository postRepository})
       : _userRepository = userRepository,
         _authBloc = authBloc,
+        _postRepository = postRepository,
         super(ProfileState.initial());
+  
+  @override
+  Future<void> close() {
+    _postsSubscription.cancel();
+    return super.close();
+  }
 
   @override
   Stream<ProfileState> mapEventToState(
@@ -27,6 +38,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async* {
     if (event is ProfileLoadUser) {
       yield* _mapProfileLoadUserToState(event);
+    } else if (event is ProfileToggleGridView) {
+      yield* _mapProfileToggleGridViewToState(event);
+    } else if (event is ProfileUpdatePosts) {
+      yield* _mapProfileUpdatePostsToState(event);
     }
   }
 
@@ -36,6 +51,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final user = await _userRepository.getUserWithId(userId: event.userId);
       final isCurrentUser = _authBloc.state.user.uid == event.userId;
+      _postsSubscription?.cancel();
+      _postsSubscription = _postRepository.getUserPosts(userId: event.userId).listen((posts) async {
+        final allPosts = await Future.wait(posts);
+        add(ProfileUpdatePosts(posts: allPosts));
+      });
       yield state.copyWith(
           user: user,
           isCurrentUser: isCurrentUser,
@@ -46,5 +66,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           failure:
               const Failure(message: 'We were unable to load this profile'));
     }
+  }
+
+  Stream<ProfileState> _mapProfileToggleGridViewToState(ProfileToggleGridView event) async* {
+    yield state.copyWith(isGridView: event.isGridView);
+  }
+
+  Stream<ProfileState> _mapProfileUpdatePostsToState(ProfileUpdatePosts event) async* {
+    yield state.copyWith(posts: event.posts);
   }
 }
