@@ -55,6 +55,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       _postsSubscription = _postRepository.getUserPosts(userId: event.userId).listen((posts) async {
         final allPosts = await Future.wait(posts);
         add(ProfileUpdatePosts(posts: allPosts));
+      }, 
+      onError: (error, stackTrace) {
+        print('ProfileBloc _mapProfileLoadUserToState _postsSubscription getUserPosts onError $error / $stackTrace');
       });
       yield state.copyWith(
           user: user,
