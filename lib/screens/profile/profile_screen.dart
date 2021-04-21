@@ -3,14 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_instagram/blocs/auth/auth_bloc.dart';
 import 'package:flutter_instagram/models/models.dart';
-import 'package:flutter_instagram/repositories/repositories.dart';
+import 'package:flutter_instagram/repositories/post/base_post_repository.dart';
+import 'package:flutter_instagram/repositories/user/base_user_repository.dart';
+import 'package:flutter_instagram/screens/screens.dart';
 import 'package:flutter_instagram/widgets/widgets.dart';
 
 import 'bloc/profile_bloc.dart';
 import 'widgets/widgets.dart';
 
+class ProfileScreenArgs {
+  final String userId;
+
+  const ProfileScreenArgs({@required this.userId});
+}
+
 class ProfileScreen extends StatefulWidget {
   static const String routeName = '/profile';
+
+  static Route route({@required ProfileScreenArgs args}){
+    return MaterialPageRoute(
+      settings: const RouteSettings(name: routeName),
+      builder: (context) => BlocProvider<ProfileBloc>(
+        create: (_) => ProfileBloc(
+          userRepository: context.read<BaseUserRepository>(),
+          postRepository: context.read<BasePostRepository>(),
+          authBloc: context.read<AuthBloc>(),
+        )..add(ProfileLoadUser(userId: args.userId)),
+        child: ProfileScreen(),
+      ),
+    );
+  }
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -140,10 +162,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                         final post = state.posts[index];
                         return Container(
                           margin: const EdgeInsets.all(10.0), 
-                          color: Colors.red, 
-                          height: 100, 
                           width: double.infinity,
-                          child: CachedNetworkImage(imageUrl: post.imageUrl, fit: BoxFit.cover,),
+                          child: PostView(post: post, isLiked: false,),
                         );
                       },
                       childCount: state.posts.length
