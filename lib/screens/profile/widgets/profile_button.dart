@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_instagram/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter_instagram/screens/screens.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileButtton extends StatelessWidget {
   final bool isCurrentUser;
@@ -32,7 +34,9 @@ class ProfileButtton extends StatelessWidget {
                 : ElevatedButton.styleFrom(
                     primary: Theme.of(context).primaryColor,
                     onPrimary: Colors.white),
-            onPressed: () {},
+            onPressed: () => isFollowing
+              ? context.read<ProfileBloc>().add(ProfileUnfollowUser())
+              : context.read<ProfileBloc>().add(ProfileFollowUser()),
             child: Text(
               isFollowing ? 'Unfollow' : 'Follow',
               style: TextStyle(fontSize: 16.0),
