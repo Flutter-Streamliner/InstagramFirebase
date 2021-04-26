@@ -67,7 +67,12 @@ class UserRepository extends BaseUserRepository {
 
   Future<bool> isFollowing({@required String userId, String otherUserId}) async {
     // is otherUser in user's userFollowing
-    final otherUserDoc = await _firebaseFirestore.collection(Paths.following).doc(userId).collection(Paths.userFollowing).doc(otherUserId).get();
+    final otherUserDoc = await _firebaseFirestore
+      .collection(Paths.following)
+      .doc(userId)
+      .collection(Paths.userFollowing)
+      .doc(otherUserId)
+      .get();
     return otherUserDoc.exists;
   }
 }
